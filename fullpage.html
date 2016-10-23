@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>整屏幕滚动</title>
+	<style>
+		html,body{
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+		.nav{
+			position: fixed;
+			z-index: 11;
+			left: 50%;
+			transform:translate(-50%); 
+		}
+		.nav div{
+			float: left;
+			margin-left: 10px;
+			width: 24px;
+			height: 24px;
+			font-size: 20px;
+			text-align: center;
+			line-height: 24px;
+		}
+		.active{
+			background: red;
+		}
+		.box{
+			width: 100%;
+			height: 400%;
+			position: relative;
+			top:0;
+			left: 0;
+		}
+		.box div{
+			width: 100%;
+			height: 25%;
+			font-size: 50px;
+			/*text-align: center;*/
+		}
+		.box div:nth-of-type(1){
+			background: orange;
+		}
+		.box div:nth-of-type(2){
+			background: blue;
+		}
+		.box div:nth-of-type(3){
+			background: yellow;
+		}
+		.box div:nth-of-type(4){
+			background: green;
+		}
+	</style>
+</head>
+<body>
+	<div class="nav">
+		<div class="active nav_d">1</div>
+		<div class="nav_d">2</div>
+		<div class="nav_d">3</div>
+		<div class="nav_d">4</div>
+	</div>
+	<div class="box">
+		<div class="page">1</div>
+		<div class="page">2</div>
+		<div class="page">3</div>
+		<div class="page">4</div>
+	</div>
+</body>
+<script src="js/jquery-1.8.3.min.js"></script>
+<script>
+	// jquery 兼容的滚轮事件
+	var num = 0;
+	var finish = true;
+	// var caltimer = true;
+	// var timer = null;
+	var s=$("body").height();
+	var pageNum = document.getElementsByClassName('page');
+	console.log(pageNum.length);
+	function scrollAn(s){
+		$(document).on("mousewheel DOMMouseScroll", function(e) {
+			if (finish) {
+					var delta = (e.originalEvent.wheelDelta && (e.originalEvent.wheelDelta > 0 ? 1 : -1)) || // chrome & ie
+				(e.originalEvent.detail && (e.originalEvent.detail > 0 ? -1 : 1)); // firefox
+
+				// if(!caltimer){return false};
+				// caltimer = false;
+				// clearTimeout(timer);
+				// timer = setTimeout(function(){
+				// 	caltimer = true;
+				// },500);
+				if (delta > 0) {
+						// 向上滚
+						num--;
+						if(num < 0) num = 0;
+						move();
+					} else if (delta < 0) {
+						// 向下滚
+						num++;
+						if(num > pageNum.length-1) num =pageNum.length-1;
+						console.log(num);
+						move();
+				}
+			};
+	
+		});
+	}
+	scrollAn(s);
+	$('.nav .nav_d').each(function(){
+			$(this).click(function(){
+				$(this).addClass('active').siblings().removeClass('active');
+				$('.box').stop().animate({top:-s*$(this).index()},'slow');
+				num = $(this).index();
+			}) 
+		})
+	function move(){
+		finish = false;
+		$(".box").stop().animate({top:-s*num},"slow",function(){finish = true});
+		$('.nav .nav_d').removeClass('active').eq(num).addClass('active');
+	}
+	$(window).resize(function(){
+		s=$("body").height();
+		//或者不用执行move()动画过度。直接 $('.box').css(top,-s*num);
+		$('.box').css({top:-s*num});
+		// move();
+	})
+</script>
+</html>
