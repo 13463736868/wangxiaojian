@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> ReactJs版轮播 </title>
+  <style type="text/css">
+    #box {
+      width: 800px; height: 500px;
+      border: 5px solid #333;
+      margin: 10px auto 0;
+    }
+  </style>
+</head>
+<body>
+  
+<div id="box"></div>
+
+<script src="js/react.js"></script>
+<script src="js/react-dom.js"></script>
+<script src="js/browser.min.js"></script>
+<script type="text/babel">
+
+var oBox = document.getElementById('box');
+
+var images = [
+  {
+    imgUrl : "images/1.jpg",
+    link : "http://www.baidu.com/s?wd=1"
+  },
+  {
+    imgUrl : "images/2.jpg",
+    link : "http://www.baidu.com/s?wd=2"
+  },
+  {
+    imgUrl : "images/3.jpg",
+    link : "http://www.baidu.com/s?wd=3"
+  },
+  {
+    imgUrl : "images/4.jpg",
+    link : "http://www.baidu.com/s?wd=4"
+  },
+  {
+    imgUrl : "images/5.jpg",
+    link : "http://www.baidu.com/s?wd=5"
+  }
+];
+
+var Slider = React.createClass({
+  getInitialState: function(){
+    return {
+      index: 0
+    };
+  },
+  clickHandle: function(ev){
+    //alert(123);
+    //alert( this.nodeType );
+    //alert( ev.target.dataset.index );
+  
+    this.setState({
+      index: ev.target.dataset.index
+    });
+
+  },
+  componentWillMount: function(){
+    var cssTxt = "div,img,li,ol,ul{width:100%;height:100%}ol,ul{margin:0;padding:0;position:relative}li{list-style:none}ul li{position:absolute;left:0;top:0;opacity:0;z-index:0;transition:.8s}ul li.active{opacity:1;z-index:1}ol{z-index:2;text-align:center;top:-30px}ol li{width:12px;height:12px;border-radius:50%;display:inline-block;margin:0 5px;border:2px solid #ccc;box-sizing:border-box}ol li.active{background:#ccc}";
+
+    var oStyle = document.createElement('style');
+    oStyle.innerHTML = cssTxt;
+    var oHead = document.getElementsByTagName('head')[0];
+    oHead.appendChild(oStyle);
+  },
+  render : function(){
+    var data = this.props.images;
+
+    return <div>
+      <ul>
+        {
+          data.map(function(v,i){
+            var sClass = i == this.state.index ? "active" : "";
+            return <li key={i} className={sClass}>
+              <a href={v.link}>
+                <img src={v.imgUrl}/>
+              </a>
+            </li>;
+          }.bind(this))
+        }
+      </ul>
+      <ol>
+        {
+          data.map(function(v,i){
+            var sClass = i == this.state.index ? "active" : "";
+            return <li key={i} data-index={i} className={sClass} onClick={this.clickHandle}></li>;
+          }.bind(this))
+        }
+      </ol>
+    </div>
+  }
+});
+
+ReactDOM.render(<Slider images={images} />, oBox);
+
+</script>
+</body>
+</html>
